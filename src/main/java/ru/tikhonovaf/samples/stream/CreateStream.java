@@ -2,10 +2,11 @@ package main.java.ru.tikhonovaf.samples.stream;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -55,11 +56,11 @@ public class CreateStream {
         //📄 6. Из файла
         //    С помощью Files.lines():
 
-        try (Stream<String> lines = Files.lines(Paths.get("data.txt"))) {
-            lines.forEach(System.out::println);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try (Stream<String> lines = Files.lines(Paths.get("data.txt"))) {
+//            lines.forEach(System.out::println);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
     //🧬7.  Из строки (через регулярное выражение)
     //  Разделение строки  на слова:
@@ -72,6 +73,32 @@ public class CreateStream {
                 add("Stream").
                 add("Builder");
         Stream<String> builderStream = builder.build();
+
+    //  Из Map
+        Map<String, Integer> map = Map.of("A", 1, "B", 2);
+
+//        1. Поток ключей
+        Stream<String> keyStream = map.keySet().stream();
+
+//        📦 2. Поток значений
+        Stream<Integer> valueStream = map.values().stream();
+
+//        🧩 3. Поток пар Map.Entry
+//        Это самый гибкий способ — позволяет работать с ключом и значением одновременно:
+        Set<Map.Entry<String, Integer>> entrySet = map.entrySet();
+        var tt = map.entrySet();
+        Stream<Map.Entry<String, Integer>> entryStream = map.entrySet().stream();
+
+        List<String> formatted = map.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .toList(); // [A=1, B=2]
+
+//🧠 Пример: фильтрация по значению
+        Map<String, Integer> scores = Map.of("Alice", 90, "Bob", 75, "Charlie", 85);
+        List<String> passed = scores.entrySet().stream()
+                .filter(e -> e.getValue() >= 80)
+                .map(Map.Entry::getKey)
+                .toList(); // [Alice, Charlie]
 
     }
 }
